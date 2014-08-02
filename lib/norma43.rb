@@ -5,23 +5,28 @@ module Norma43
   
   DATE_FORMAT = '%y%m%d'
   
-  def self.read(path_to_file, encoding="iso-8859-1")
+  def self.read(path, encoding="iso-8859-1")
     data = Hash.new
     data[:movements] = Array.new
-    
-    file = File.open(path_to_file, "r") 
-    file.each do |encoded_line|
-      line = Iconv.iconv("UTF-8", "#{encoding}", encoded_line).to_s
-      code = line[0..1]
-      data[:info] = self.parse_header(line) if code == '11'
-      data[:movements] << self.parse_movement_main(line) if code == '22'
-      #TODO support multiple '23' lines (there may be up to 5)
-      data[:movements].last.merge!(self.parse_movement_optional(line)) if code == '23'
-      #TODO check amount values against those on record 33 
-      data[:info].merge!(self.parse_end(line)) if code == '33'
-      #TODO parse record 88, end of file
+    File.open(path, "r:#{encoding}:UTF-8") do |file|
+      file.readlines.each do |line|
+        code = line[0..1]
+        case code
+        when '11'
+          data[:info] = parse_header(line)
+        when '22'
+          data[:movements] << parse_movement_main(line)
+        when '23'
+          #TODO support multiple '23' lines (there may be up to 5)
+          data[:movements].last.merge!(parse_movement_optional(line))
+        when '33'
+          data[:info].merge!(parse_end(line))
+        end
+
+        #TODO check amount values against those on record 33
+        #TODO parse record 88, end of file
+      end
     end 
-    file.close
 
     data
   end
