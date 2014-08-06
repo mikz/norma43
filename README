@@ -3,25 +3,25 @@ Parser for NORMA43 Files. (a standard from the spanish banking industry for acco
 Install
 =======
 
-gem install norma43
+gem install rule43
 
 
 Usage
 =====
 
 require 'rubygems'
-require 'norma43'
+require 'rule43'
 
-data = Norma43.read(PATH_TO_FILE, "iso-8859-1")
+data = Rule43.read(PATH_TO_FILE, "iso-8859-1")
 
 Second parameter is the encoding of the .n43 file. As spanish banks continue in 20th Century, default is iso-8859-1.
 
 
 Data format (excerpt from data.to_yaml)
 ===========
-:info: 
+:info:
   :end_date: 2011-03-20
-  :account: 
+  :account:
     :bank: 1234
     :office: "1234"
     :number: 1234567890
@@ -31,7 +31,7 @@ Data format (excerpt from data.to_yaml)
   :account_owner: YOUR NAME OR COMPANY
   :currency: "978"
   :begin_date: 2011-03-01
-:movements: 
+:movements:
   - :operation_date: 2011-03-01
     :concept: TRANSFERENC. A MR. POSTMAN
     :value_date: 2011-03-01

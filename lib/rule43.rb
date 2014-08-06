@@ -1,9 +1,9 @@
 require 'date'
 
-module Norma43
-  
+module Rule43
+
   DATE_FORMAT = '%y%m%d'
-  
+
   def self.read(path, encoding="iso-8859-1")
     data = Hash.new
     data[:movements] = Array.new
@@ -25,15 +25,15 @@ module Norma43
         #TODO check amount values against those on record 33
         #TODO parse record 88, end of file
       end
-    end 
+    end
 
     data
   end
-  
+
   protected
 
     def self.parse_header(line)
-      account = {:bank => line[2..5].to_s, :office => line[6..9].to_s, 
+      account = {:bank => line[2..5].to_s, :office => line[6..9].to_s,
                  :number => line[10..19].to_s, :control => "??"}
       {
         :account => account,
@@ -41,7 +41,7 @@ module Norma43
         :end_date => Date.strptime(line[26..31], DATE_FORMAT),
         :initial_balance => parse_amount(line[33..46], line[32].chr),
         :account_owner => line[51..76].strip,
-        :currency => line[47..49]          
+        :currency => line[47..49]
       }
     end
 
@@ -64,9 +64,9 @@ module Norma43
     def self.parse_end(line)
       {:final_balance => parse_amount(line[59..72], line[28].chr)}
     end
-    
+
     def self.parse_amount(value, sign)
       value.to_f / 100 * (sign.to_i == 1 ? -1 : 1)
     end
-  
+
 end
